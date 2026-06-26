@@ -1,0 +1,28 @@
+{
+  "name": "create-flutter-clean-base",
+  "version": "1.0.0",
+  "description": "Scaffold a new Flutter Clean Architecture + BLoC app from the flutter-clean-base template (like create-react-app).",
+  "bin": {
+    "create-flutter-clean-base": "index.js",
+    "flutter-clean-base": "index.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "flutter",
+    "clean-architecture",
+    "bloc",
+    "template",
+    "scaffold",
+    "create",
+    "starter"
+  ],
+  "license": "MIT",
+  "author": "dotuananhtb"
+}
