@@ -1,20 +1,20 @@
 # create-flutter-clean-base
 
-Scaffold a new **Flutter Clean Architecture + BLoC** app from the
-[`flutter-clean-base`](https://github.com/dotuananhtb/flutter-clean-base)
-template — like `create-react-app` / `create-next-app`, but for Flutter.
+CLI to scaffold a new Flutter app from a template.
 
 ## Usage
 
-On any machine where you are logged in to GitHub (`gh auth login`) and have
-Flutter installed:
-
 ```bash
-npx github:dotuananhtb/flutter my_app
+npx github:dotuananhtb/flutter <app_name>
 ```
 
-It will interactively ask for the bundle id, app display name and whether to run
-`flutter pub get`, then produce a ready-to-run project in `./my_app`.
+The command then asks for:
+
+- **Bundle id / applicationId** — default `com.example.<app_name>`
+- **App display name** — default Title Case of the name
+- **Run `flutter pub get` now?** — default yes
+
+It creates a ready-to-run project in `./<app_name>`.
 
 ### Non-interactive
 
@@ -35,30 +35,28 @@ npx github:dotuananhtb/flutter my_app \
 | `--ref <branch>` | `main` | template branch/tag |
 | `--template <owner/repo>` | `dotuananhtb/flutter-clean-base` | source template |
 | `--no-install` | — | skip `flutter pub get` |
-| `--codegen` | — | also run `build_runner` (needs the pinned Flutter 3.35.2) |
+| `--codegen` | — | also run `build_runner` |
 | `-y, --yes` | — | accept all defaults, no prompts |
+| `-h, --help` | — | show help |
 
-## What it does
+### After scaffolding
 
-1. Clones the template via `gh` (your GitHub auth) — works with the private template.
-2. Renames the Dart package, applicationId / bundle id, app display name and the
-   Android Kotlin package; moves `MainActivity.kt`.
-3. Resets git history with a fresh initial commit.
-4. Runs `flutter pub get` (unless `--no-install`).
+```bash
+cd my_app
+flutter run --flavor develop -t lib/main_develop.dart
+```
 
 ## Requirements
 
 - Node.js ≥ 18 (for `npx`)
-- [GitHub CLI](https://cli.github.com/) authenticated (`gh auth login`) — needed to clone the private template
+- [GitHub CLI](https://cli.github.com/) authenticated: `gh auth login`
 - Flutter SDK on `PATH`
 
-## Optional: publish to npm for a shorter command
+## Optional: shorter command via npm
 
 ```bash
 npm login
 npm publish
-# then anywhere:
+# then, anywhere:
 npx create-flutter-clean-base my_app
-# or
-npm create flutter-clean-base my_app
 ```
