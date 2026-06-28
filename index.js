@@ -52,6 +52,7 @@ function parseArgs(argv) {
     if (a === '-h' || a === '--help') opts.help = true;
     else if (a === '-y' || a === '--yes') opts.yes = true;
     else if (a === '--no-install') opts.install = false;
+    else if (a === '--no-ck') opts.ck = false;
     else if (a === '--codegen') opts.codegen = true;
     else if (a === '--org') opts.org = argv[++i];
     else if (a === '--bundle') opts.bundle = argv[++i];
@@ -81,6 +82,7 @@ ${bold('Options')}
   --ref <branch>         Template branch/tag to use (default main)
   --template <owner/repo> Template repo (default ${TEMPLATE_DEFAULT})
   --no-install           Skip "flutter pub get"
+  --no-ck                Skip ClaudeKit activation (CLI install + connector check)
   --codegen              Also run build_runner (needs the pinned Flutter)
   -y, --yes              Accept all defaults, no prompts
   -h, --help             Show this help
@@ -320,6 +322,31 @@ async function main() {
       step('Running build_runner …');
       const g = spawnSync('dart', ['run', 'build_runner', 'build', '--delete-conflicting-outputs'], { cwd: target, stdio: 'inherit' });
       if (g.status !== 0) warn('build_runner failed — make sure you use the pinned Flutter (see .fvmrc), then rerun it.');
+    }
+  }
+
+  // 10) ClaudeKit activation — ensure the `ck` CLI + external-service connectors
+  // The kit FILES are already baked into the template; here we make sure the
+  // machine has the `ck` CLI and that the external-service connectors (Gemini,
+  // Stitch, etc.) are wired. Connectors live globally in ~/.claude/.env and are
+  // inherited by every project — you only configure them once per machine.
+  if (opts.ck !== false) {
+    step('Activating ClaudeKit (CLI + connectors) …');
+    if (!has('ck')) {
+      log(dim('  ck CLI not found — installing claudekit-cli globally …'));
+      const i = spawnSync('npm', ['install', '-g', 'claudekit-cli'], { stdio: 'inherit' });
+      if (i.status !== 0) warn('Could not install claudekit-cli — run manually: npm i -g claudekit-cli');
+    }
+    if (has('ck')) {
+      const globalEnv = path.join(os.homedir(), '.claude', '.env');
+      if (fs.existsSync(globalEnv)) {
+        ok('External-service connectors found in ~/.claude/.env — inherited by this project.');
+      } else if (interactive) {
+        log(dim('  No global connectors yet — launching one-time `ck setup --global` …'));
+        spawnSync('ck', ['setup', '--global', '--skip-packages'], { stdio: 'inherit' });
+      } else {
+        warn('No external-service connectors yet. Connect once with: ck setup --global');
+      }
     }
   }
 
