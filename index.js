@@ -274,8 +274,10 @@ async function main() {
   for (const rel of nameFiles) {
     replaceInFile(path.join(target, rel), [[TOKENS.display, display]]);
   }
-  // Retitle the project's CLAUDE.md (template name → app display name)
-  replaceInFile(path.join(target, 'CLAUDE.md'), [['Flutter Clean Base', display]]);
+  // Retitle the project's CLAUDE.md and SETUP.md (template name → app display name)
+  for (const f of ['CLAUDE.md', 'SETUP.md']) {
+    replaceInFile(path.join(target, f), [['Flutter Clean Base', display]]);
+  }
 
   // 6) move Kotlin MainActivity to the new package path
   step('Moving Android MainActivity package …');
