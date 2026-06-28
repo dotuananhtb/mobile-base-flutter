@@ -341,11 +341,12 @@ async function main() {
       const globalEnv = path.join(os.homedir(), '.claude', '.env');
       if (fs.existsSync(globalEnv)) {
         ok('External-service connectors found in ~/.claude/.env — inherited by this project.');
-      } else if (interactive) {
-        log(dim('  No global connectors yet — launching one-time `ck setup --global` …'));
-        spawnSync('ck', ['setup', '--global', '--skip-packages'], { stdio: 'inherit' });
       } else {
-        warn('No external-service connectors yet. Connect once with: ck setup --global');
+        // Connectors are lazy: code skills work without them. Only needed when
+        // you first use an external-AI skill — so just inform, never force.
+        log(dim('  External-AI connectors are optional — code skills work without them.'));
+        log(dim('  When you first use an AI skill (ai-artist, ai-multimodal, stitch), run once:'));
+        log(dim('    ck setup --global'));
       }
     }
   }
